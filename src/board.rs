@@ -51,14 +51,13 @@ impl Board {
 	}
 	fn solve_helper(&self) -> bool {
 		if let Some((x, y)) = self.next_empty() {
-			let mut m = self.matrix.borrow_mut();
 			for guess in self.guess(x, y) {
-				m[x][y] = guess;
-				if !self.solve() {
-					m[x][y] = 0
+				self.matrix.borrow_mut()[x][y] = guess;
+				if !self.solve_helper() {
+					self.matrix.borrow_mut()[x][y] = 0
 				}
 			}
-			if m[x][y] == 0 {
+			if self.matrix.borrow_mut()[x][y] == 0 {
 				return false;
 			}
 		}
