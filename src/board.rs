@@ -101,11 +101,17 @@ pub struct BoardBuilder {
 	matrix: RefCell<[[u8; 9]; 9]>,
 }
 impl BoardBuilder {
-	pub fn file(&self, fd: File) {
+	pub fn new() -> BoardBuilder {
+		BoardBuilder {
+			matrix: RefCell::new([[0; 9]; 9]),
+		}
+	}
+	pub fn file(self, _fd: File) {
 		todo!()
 	}
-	pub fn array(&self, val: [[u8; 9]; 9]) {
+	pub fn array(self, val: [[u8; 9]; 9]) -> BoardBuilder {
 		self.matrix.swap(&RefCell::new(val));
+		self
 	}
 	pub fn build(self) -> Board {
 		Board {
