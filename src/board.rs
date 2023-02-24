@@ -40,8 +40,14 @@ impl Board {
 		None
 	}
 
-	fn guess(&self) {
-		todo!()
+	fn guess(&self, row: usize, col: usize) -> Vec<u8> {
+		let mut guesses: Vec<u8> = vec![];
+		for guess in 1..=9 {
+			if self.valid_guess(row, col, guess) {
+				guesses.push(guess)
+			}
+		}
+		guesses
 	}
 
 	pub fn solve(&self) {
