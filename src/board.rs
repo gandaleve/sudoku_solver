@@ -50,8 +50,20 @@ impl Board {
 		guesses
 	}
 
-	pub fn solve(&self) {
-		todo!()
+	pub fn solve(&self) -> bool {
+		if let Some((x, y)) = self.next_empty() {
+			let mut m = self.matrix.borrow_mut();
+			for guess in self.guess(x, y) {
+				m[x][y] = guess;
+				if !self.solve() {
+					m[x][y] = 0
+				}
+			}
+			if m[x][y] == 0 {
+				return false;
+			}
+		}
+		true
 	}
 
 	pub fn print() {
