@@ -27,6 +27,30 @@ impl Board {
 		}
 		true
 	}
+
+	fn next_empty(&self) -> Option<(usize, usize)> {
+		let m = self.matrix.borrow();
+		for row in 0..9 {
+			for cell in 0..9 {
+				if m[row][cell] == 0 {
+					return Some((row, cell));
+				}
+			}
+		}
+		None
+	}
+
+	fn guess(&self) {
+		todo!()
+	}
+
+	pub fn solve(&self) {
+		todo!()
+	}
+
+	pub fn print() {
+		todo!()
+	}
 }
 
 pub struct BoardBuilder {
