@@ -49,8 +49,7 @@ impl Board {
 		}
 		guesses
 	}
-
-	pub fn solve(&self) -> bool {
+	fn solve_helper(&self) -> bool {
 		if let Some((x, y)) = self.next_empty() {
 			let mut m = self.matrix.borrow_mut();
 			for guess in self.guess(x, y) {
