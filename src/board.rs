@@ -6,7 +6,7 @@ pub struct Board {
 }
 
 impl Board {
-	fn position_valid(&self, row: usize, col: usize, val: u8) -> bool {
+	fn valid_guess(&self, row: usize, col: usize, val: u8) -> bool {
 		let m = self.matrix.borrow();
 
 		for cell in 0..9 {
