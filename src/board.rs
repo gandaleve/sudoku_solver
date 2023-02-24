@@ -64,6 +64,12 @@ impl Board {
 		true
 	}
 
+	pub fn solve(&self) {
+		println!("Solving....");
+		self.print();
+		self.solve_helper();
+	}
+
 	pub fn print(&self) {
 		let m = self.matrix.borrow();
 		println!("╭───────┬───────┬───────╮");
