@@ -66,8 +66,30 @@ impl Board {
 		true
 	}
 
-	pub fn print() {
-		todo!()
+	pub fn print(&self) {
+		let m = self.matrix.borrow();
+		println!("╭───────┬───────┬───────╮");
+		for u in 0..9 {
+			for v in 0..9 {
+				if v == 0 {
+					print!("│")
+				}
+				if m[u][v] == 0 {
+					print!("  ");
+				} else {
+					print!(" {}", m[u][v]);
+				}
+				if (v + 1) % 3 == 0 {
+					print! {" │"}
+				}
+			}
+			if (u + 1) % 3 == 0 && u != 8 {
+				println!("\n├───────┼───────┼───────┤");
+			} else {
+				println!();
+			}
+		}
+		println!("╰───────┴───────┴───────╯");
 	}
 }
 
