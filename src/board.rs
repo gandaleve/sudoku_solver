@@ -2,12 +2,12 @@ use std::cell::RefCell;
 use std::fs::File;
 
 pub struct Board {
-	matrix: RefCell<[[u8; 9]; 9]>,
+	flat_vec: RefCell<Vec<u8>>,
 }
 
 impl Board {
 	fn valid_guess(&self, row: usize, col: usize, val: u8) -> bool {
-		let m = self.matrix.borrow();
+		let m = self.flat_vec.borrow();
 
 		for cell in 0..9 {
 			if m[row][cell] == val || m[cell][col] == val {
@@ -27,7 +27,7 @@ impl Board {
 	}
 
 	fn next_empty(&self) -> Option<(usize, usize)> {
-		let m = self.matrix.borrow();
+		let m = self.flat_vec.borrow();
 		for row in 0..9 {
 			for cell in 0..9 {
 				if m[row][cell] == 0 {
@@ -50,12 +50,12 @@ impl Board {
 	fn solve_helper(&self) -> bool {
 		if let Some((x, y)) = self.next_empty() {
 			for guess in self.guess(x, y) {
-				self.matrix.borrow_mut()[x][y] = guess;
+				self.flat_vec.borrow_mut()[x][y] = guess;
 				if !self.solve_helper() {
-					self.matrix.borrow_mut()[x][y] = 0
+					self.flat_vec.borrow_mut()[x][y] = 0
 				}
 			}
-			if self.matrix.borrow_mut()[x][y] == 0 {
+			if self.flat_vec.borrow_mut()[x][y] == 0 {
 				return false;
 			}
 		}
@@ -69,7 +69,7 @@ impl Board {
 	}
 
 	pub fn print(&self) {
-		let m = self.matrix.borrow();
+		let m = self.flat_vec.borrow();
 		println!("╭───────┬───────┬───────╮");
 		for u in 0..9 {
 			for v in 0..9 {
@@ -96,12 +96,12 @@ impl Board {
 }
 
 pub struct BoardBuilder {
-	matrix: RefCell<[[u8; 9]; 9]>,
+	flat_vec: Vec<u8>,
 }
 impl BoardBuilder {
 	pub fn new() -> BoardBuilder {
 		BoardBuilder {
-			flat_arr: vec![0; 9],
+			flat_vec: vec![0; 81],
 		}
 	}
 	pub fn file(self, fp: &str) {
