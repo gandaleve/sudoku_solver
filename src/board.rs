@@ -101,11 +101,19 @@ pub struct BoardBuilder {
 impl BoardBuilder {
 	pub fn new() -> BoardBuilder {
 		BoardBuilder {
-			matrix: RefCell::new([[0; 9]; 9]),
+			flat_arr: vec![0; 9],
 		}
 	}
-	pub fn file(self, _fd: File) {
-		todo!()
+	pub fn file(self, fp: &str) {
+		let fd = fs::read_to_string(fp).unwrap();
+		let mut line: Vec<u8> = vec![];
+		for char in fd.chars() {
+			match char {
+				' ' | '\n' => continue,
+				'_' => line.push(0),
+				_ => line.push(char.to_digit(10).unwrap() as u8),
+			}
+		}
 	}
 	pub fn array(self, val: [[u8; 9]; 9]) -> BoardBuilder {
 		self.matrix.swap(&RefCell::new(val));
