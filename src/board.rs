@@ -19,10 +19,8 @@ impl Board {
 		let v = (col / 3) * 3;
 
 		for x in &m[u..u + 3] {
-			for y in v..v + 3 {
-				if x[y] == val {
-					return false;
-				}
+			if x[v..v + 3].contains(&val) {
+				return false;
 			}
 		}
 		true
