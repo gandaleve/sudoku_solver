@@ -1,5 +1,5 @@
 use std::cell::RefCell;
-use std::fs::File;
+use std::fs;
 
 pub struct Board {
 	flat_vec: RefCell<Vec<u8>>,
@@ -10,7 +10,7 @@ impl Board {
 		let m = self.flat_vec.borrow();
 
 		for cell in 0..9 {
-			if m[row][cell] == val || m[cell][col] == val {
+			if m[(row * 9) + cell] == val || m[(cell * 9) + col] == val {
 				return false;
 			}
 		}
@@ -18,8 +18,8 @@ impl Board {
 		let u = (row / 3) * 3;
 		let v = (col / 3) * 3;
 
-		for x in &m[u..u + 3] {
-			if x[v..v + 3].contains(&val) {
+		for x in u..u + 3 {
+			if m[x * 9 + v..x * 9 + v + 3].contains(&val) {
 				return false;
 			}
 		}
@@ -30,7 +30,7 @@ impl Board {
 		let m = self.flat_vec.borrow();
 		for row in 0..9 {
 			for cell in 0..9 {
-				if m[row][cell] == 0 {
+				if m[row * 9 + cell] == 0 {
 					return Some((row, cell));
 				}
 			}
@@ -50,12 +50,12 @@ impl Board {
 	fn solve_helper(&self) -> bool {
 		if let Some((x, y)) = self.next_empty() {
 			for guess in self.guess(x, y) {
-				self.flat_vec.borrow_mut()[x][y] = guess;
+				self.flat_vec.borrow_mut()[x * 9 + y] = guess;
 				if !self.solve_helper() {
-					self.flat_vec.borrow_mut()[x][y] = 0
+					self.flat_vec.borrow_mut()[x * 9 + y] = 0
 				}
 			}
-			if self.flat_vec.borrow_mut()[x][y] == 0 {
+			if self.flat_vec.borrow_mut()[x * 9 + y] == 0 {
 				return false;
 			}
 		}
@@ -76,10 +76,10 @@ impl Board {
 				if v == 0 {
 					print!("│")
 				}
-				if m[u][v] == 0 {
+				if m[u * 9 + v] == 0 {
 					print!("  ");
 				} else {
-					print!(" {}", m[u][v]);
+					print!(" {}", m[u * 9 + v]);
 				}
 				if (v + 1) % 3 == 0 {
 					print! {" │"}
@@ -104,7 +104,7 @@ impl BoardBuilder {
 			flat_vec: vec![0; 81],
 		}
 	}
-	pub fn file(self, fp: &str) {
+	pub fn file(self, fp: &str) -> Self {
 		let fd = fs::read_to_string(fp).unwrap();
 		let mut line: Vec<u8> = vec![];
 		for char in fd.chars() {
@@ -114,14 +114,15 @@ impl BoardBuilder {
 				_ => line.push(char.to_digit(10).unwrap() as u8),
 			}
 		}
+		BoardBuilder { flat_vec: line }
 	}
-	pub fn array(self, val: [[u8; 9]; 9]) -> BoardBuilder {
-		self.matrix.swap(&RefCell::new(val));
+	pub fn array(self, val: Vec<u8>) -> Self {
+		//self.matrix.swap(&RefCell::new(val));
 		self
 	}
 	pub fn build(self) -> Board {
 		Board {
-			matrix: self.matrix,
+			flat_vec: RefCell::new(self.flat_vec),
 		}
 	}
 }
