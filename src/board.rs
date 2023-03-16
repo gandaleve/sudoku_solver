@@ -2,12 +2,12 @@ use std::cell::RefCell;
 use std::fs;
 
 pub struct Board {
-	flat_vec: RefCell<Vec<u8>>,
+	flat_vec: Vec<u8>,
 }
 
 impl Board {
 	fn valid_guess(&self, row: usize, col: usize, val: u8) -> bool {
-		let m = self.flat_vec.borrow();
+		let m = &self.flat_vec;
 
 		for cell in 0..9 {
 			if m[(row * 9) + cell] == val || m[(cell * 9) + col] == val {
@@ -27,7 +27,7 @@ impl Board {
 	}
 
 	fn next_empty(&self) -> Option<(usize, usize)> {
-		let m = self.flat_vec.borrow();
+		let m = &self.flat_vec;
 		for row in 0..9 {
 			for cell in 0..9 {
 				if m[row * 9 + cell] == 0 {
@@ -47,29 +47,29 @@ impl Board {
 		}
 		guesses
 	}
-	fn solve_helper(&self) -> bool {
+	fn solve_helper(&mut self) -> bool {
 		if let Some((x, y)) = self.next_empty() {
 			for guess in self.guess(x, y) {
-				self.flat_vec.borrow_mut()[x * 9 + y] = guess;
+				self.flat_vec[x * 9 + y] = guess;
 				if !self.solve_helper() {
-					self.flat_vec.borrow_mut()[x * 9 + y] = 0
+					self.flat_vec[x * 9 + y] = 0
 				}
 			}
-			if self.flat_vec.borrow_mut()[x * 9 + y] == 0 {
+			if self.flat_vec[x * 9 + y] == 0 {
 				return false;
 			}
 		}
 		true
 	}
 
-	pub fn solve(&self) {
+	pub fn solve(&mut self) {
 		println!("Solving....");
 		self.print();
 		self.solve_helper();
 	}
 
 	pub fn print(&self) {
-		let m = self.flat_vec.borrow();
+		let m = &self.flat_vec;
 		println!("╭───────┬───────┬───────╮");
 		for u in 0..9 {
 			for v in 0..9 {
@@ -116,13 +116,13 @@ impl BoardBuilder {
 		}
 		BoardBuilder { flat_vec: line }
 	}
-	pub fn array(self, val: Vec<u8>) -> Self {
-		//self.matrix.swap(&RefCell::new(val));
+	pub fn array(mut self, val: Vec<u8>) -> Self {
+		self.flat_vec = val;
 		self
 	}
 	pub fn build(self) -> Board {
 		Board {
-			flat_vec: RefCell::new(self.flat_vec),
+			flat_vec: self.flat_vec,
 		}
 	}
 }
