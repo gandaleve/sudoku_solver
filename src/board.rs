@@ -64,35 +64,35 @@ impl Board {
 
 	pub fn solve(&mut self) {
 		println!("Solving....");
-		self.print();
+		print(&self.flat_vec);
 		self.solve_helper();
+		print(&self.flat_vec);
 	}
+}
 
-	pub fn print(&self) {
-		let m = &self.flat_vec;
-		println!("╭───────┬───────┬───────╮");
-		for u in 0..9 {
-			for v in 0..9 {
-				if v == 0 {
-					print!("│")
-				}
-				if m[u * 9 + v] == 0 {
-					print!("  ");
-				} else {
-					print!(" {}", m[u * 9 + v]);
-				}
-				if (v + 1) % 3 == 0 {
-					print! {" │"}
-				}
+fn print(m: &[u8]) {
+	println!("╭───────┬───────┬───────╮");
+	for u in 0..9 {
+		for v in 0..9 {
+			if v == 0 {
+				print!("│")
 			}
-			if (u + 1) % 3 == 0 && u != 8 {
-				println!("\n├───────┼───────┼───────┤");
+			if m[u * 9 + v] == 0 {
+				print!("  ");
 			} else {
-				println!();
+				print!(" {}", m[u * 9 + v]);
+			}
+			if (v + 1) % 3 == 0 {
+				print! {" │"}
 			}
 		}
-		println!("╰───────┴───────┴───────╯");
+		if (u + 1) % 3 == 0 && u != 8 {
+			println!("\n├───────┼───────┼───────┤");
+		} else {
+			println!();
+		}
 	}
+	println!("╰───────┴───────┴───────╯");
 }
 
 pub struct BoardBuilder {
